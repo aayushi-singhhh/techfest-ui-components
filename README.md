@@ -14,7 +14,9 @@ This project showcases three fully accessible, reusable UI components built with
 
 ## 🚀 Live Demo
 
-[View Live Demo](https://your-deployment-url.com) <!-- Replace with actual deployment URL -->
+**[🌐 View Live Demo](https://aayushi-singhhh.github.io/techfest-ui-components/)**
+
+**[📁 GitHub Repository](https://github.com/aayushi-singhhh/techfest-ui-components)**
 
 ## 📦 Components
 
@@ -160,8 +162,8 @@ All components follow WCAG 2.1 AA guidelines:
 ### Local Development:
 1. Clone the repository:
    ```bash
-   git clone [repository-url]
-   cd techfest3
+   git clone https://github.com/aayushi-singhhh/techfest-ui-components.git
+   cd techfest-ui-components
    ```
 
 2. Serve the files using a local web server:
