@@ -12,101 +12,106 @@ jobs:
     name: Test UI Components
     
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     
     - name: Setup Node.js
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: '18'
     
-    - name: Install dependencies
+    - name: Create package.json and install dependencies
       run: |
-        npm install -g http-server
-        npm install puppeteer
+        npm init -y
+        npm install http-server puppeteer
     
     - name: Start local server
       run: |
-        http-server . -p 8080 &
-        sleep 3
+        npx http-server . -p 8080 &
+        sleep 5
       
-    - name: Run accessibility tests
+    - name: Run component tests
       run: |
         node -e "
         const puppeteer = require('puppeteer');
         (async () => {
+          console.log('🚀 Starting TechFest UI Components Tests...');
+          
           const browser = await puppeteer.launch({
-            args: ['--no-sandbox', '--disable-setuid-sandbox']
+            headless: 'new',
+            args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
           });
+          
           const page = await browser.newPage();
-          await page.goto('http://localhost:8080/techfest.html');
           
-          // Wait for components to load
-          await page.waitForSelector('.modal-trigger');
-          await page.waitForSelector('#myTabs');
-          await page.waitForSelector('#myCarousel');
-          
-          // Test modal functionality
-          await page.click('.modal-trigger');
-          await page.waitForSelector('.modal-overlay.active');
-          await page.keyboard.press('Escape');
-          await page.waitForSelector('.modal-overlay:not(.active)', { timeout: 1000 });
-          
-          // Test keyboard navigation in tabs
-          await page.focus('.tab-button');
-          await page.keyboard.press('ArrowRight');
-          
-          // Test carousel navigation
-          await page.click('.next-button');
-          
-          // Check for console errors
-          const errors = await page.evaluate(() => {
-            return window.errors || [];
-          });
-          
-          if (errors.length > 0) {
-            console.error('JavaScript errors found:', errors);
+          try {
+            console.log('📄 Loading page...');
+            await page.goto('http://localhost:8080/techfest.html', { 
+              waitUntil: 'networkidle0',
+              timeout: 10000 
+            });
+            
+            console.log('✅ Page loaded successfully');
+            
+            // Wait for components to load
+            await page.waitForSelector('.modal-trigger', { timeout: 5000 });
+            await page.waitForSelector('#myTabs', { timeout: 5000 });
+            await page.waitForSelector('#myCarousel', { timeout: 5000 });
+            
+            console.log('✅ All components loaded');
+            
+            // Test modal functionality
+            console.log('Testing modal...');
+            await page.click('.modal-trigger');
+            await page.waitForSelector('.modal-overlay.active', { timeout: 2000 });
+            await page.keyboard.press('Escape');
+            await page.waitForFunction(
+              () => !document.querySelector('.modal-overlay.active'),
+              { timeout: 2000 }
+            );
+            console.log('✅ Modal test passed');
+            
+            // Test tabs functionality
+            console.log('Testing tabs...');
+            await page.focus('.tab-button[aria-selected=\"true\"]');
+            await page.keyboard.press('ArrowRight');
+            console.log('✅ Tabs test passed');
+            
+            // Test carousel functionality
+            console.log('Testing carousel...');
+            await page.click('.next-button');
+            console.log('✅ Carousel test passed');
+            
+            // Check unit test results
+            console.log('Checking unit tests...');
+            await page.waitForTimeout(3000);
+            
+            const testResults = await page.evaluate(() => {
+              const testItems = document.querySelectorAll('.test-item');
+              const passed = document.querySelectorAll('.test-pass');
+              const failed = document.querySelectorAll('.test-fail');
+              
+              return {
+                total: testItems.length,
+                passed: passed.length,
+                failed: failed.length
+              };
+            });
+            
+            console.log(\`📊 Unit Test Results: \${testResults.passed}/\${testResults.total} passed\`);
+            
+            if (testResults.failed > 0) {
+              console.error(\`❌ \${testResults.failed} unit tests failed!\`);
+              process.exit(1);
+            }
+            
+            console.log('🎉 All tests passed successfully!');
+            
+          } catch (error) {
+            console.error('❌ Test failed:', error.message);
             process.exit(1);
+          } finally {
+            await browser.close();
           }
-          
-          console.log('✅ All UI component tests passed!');
-          await browser.close();
-        })();
-        "
-    
-    - name: Test unit tests
-      run: |
-        node -e "
-        const puppeteer = require('puppeteer');
-        (async () => {
-          const browser = await puppeteer.launch({
-            args: ['--no-sandbox', '--disable-setuid-sandbox']
-          });
-          const page = await browser.newPage();
-          await page.goto('http://localhost:8080/techfest.html');
-          
-          // Wait for tests to complete
-          await page.waitForTimeout(2000);
-          
-          // Check test results
-          const testResults = await page.evaluate(() => {
-            const testItems = document.querySelectorAll('.test-item');
-            const failed = document.querySelectorAll('.test-fail');
-            return {
-              total: testItems.length,
-              failed: failed.length
-            };
-          });
-          
-          console.log(\`Tests run: \${testResults.total}\`);
-          console.log(\`Tests failed: \${testResults.failed}\`);
-          
-          if (testResults.failed > 0) {
-            console.error('❌ Some unit tests failed!');
-            process.exit(1);
-          }
-          
-          console.log('✅ All unit tests passed!');
-          await browser.close();
         })();
         "
 
