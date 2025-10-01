@@ -12,9 +12,15 @@ This project showcases three fully accessible, reusable UI components built with
 - **Theme:** Innovation Beyond Boundaries - Technology for Tomorrow
 - **Competitions:** 50+ events across robotics, programming, design & engineering
 
-## 🚀 Live Demo
+## 🚀 Live Interactive Demo
 
-**[🌐 View Live Demo](https://aayushi-singhhh.github.io/techfest-ui-components/)**
+**[🌐 **LIVE DEMO** - Click to interact with all components!](https://aayushi-singhhh.github.io/techfest-ui-components/)**
+
+This link takes you directly to the interactive UI components showcase where you can:
+- ✅ Click "Register for TechFest 2025" to test the accessible modal
+- ✅ Use arrow keys (← →) to navigate the competition category tabs  
+- ✅ Swipe or use arrow keys in the TechFest highlights carousel
+- ✅ See all 12 unit tests running at the bottom of the page
 
 **[📁 GitHub Repository](https://github.com/aayushi-singhhh/techfest-ui-components)**
 

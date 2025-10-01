@@ -1,7 +1,9 @@
 # 🎉 **DEPLOYMENT COMPLETE - TechFest UI Components**
 
-## 🌐 **LIVE SITE**
+## 🌐 **LIVE INTERACTIVE DEMO**
 **[https://aayushi-singhhh.github.io/techfest-ui-components/](https://aayushi-singhhh.github.io/techfest-ui-components/)**
+
+**⚡ This is the INTERACTIVE demo with all working components - not just documentation!**
 
 ## 📁 **REPOSITORY**
 **[https://github.com/aayushi-singhhh/techfest-ui-components](https://github.com/aayushi-singhhh/techfest-ui-components)**
