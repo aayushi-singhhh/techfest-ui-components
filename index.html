@@ -1,0 +1,1310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TechFest IIT Bombay - Interactive UI Components</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background: linear-gradient(135deg, #FF6B35 0%, #F7931E 50%, #FFD23F 100%);
+      min-height: 100vh;
+      padding: 2rem;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 16px;
+      padding: 3rem;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+
+    h1 {
+      color: #FF6B35;
+      margin-bottom: 0.5rem;
+      font-size: 2.5rem;
+      font-weight: 700;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .subtitle {
+      color: #666;
+      margin-bottom: 2rem;
+      font-size: 1.1rem;
+    }
+
+    .techfest-header {
+      background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);
+      color: white;
+      padding: 2rem;
+      border-radius: 12px;
+      margin-bottom: 3rem;
+      text-align: center;
+      box-shadow: 0 8px 32px rgba(255,107,53,0.3);
+    }
+
+    .techfest-header h2 {
+      color: white;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .techfest-info {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .info-card {
+      background: rgba(255,255,255,0.2);
+      padding: 1.5rem;
+      border-radius: 8px;
+      backdrop-filter: blur(10px);
+    }
+
+    .info-card h3 {
+      color: white;
+      margin-bottom: 0.5rem;
+      font-size: 1.2rem;
+    }
+
+    .info-card p {
+      color: rgba(255,255,255,0.9);
+      font-size: 0.95rem;
+    }
+
+    .component-section {
+      margin-bottom: 4rem;
+      padding-bottom: 3rem;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    .component-section:last-child {
+      border-bottom: none;
+    }
+
+    h2 {
+      color: #FF6B35;
+      margin-bottom: 1rem;
+      font-size: 1.8rem;
+    }
+
+    .description {
+      color: #666;
+      margin-bottom: 1.5rem;
+    }
+
+    .features {
+      background: #f8f9ff;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+      color: #555;
+    }
+
+    /* Modal Styles */
+    .modal-trigger {
+      background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);
+      color: white;
+      border: none;
+      padding: 1rem 2rem;
+      font-size: 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .modal-trigger:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(255,107,53,0.4);
+    }
+
+    .modal-trigger:focus {
+      outline: 3px solid #FF6B35;
+      outline-offset: 2px;
+    }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 1000;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 1;
+    }
+
+    .modal-dialog {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      max-width: 500px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      transform: scale(0.9);
+      transition: transform 0.3s;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+
+    .modal-overlay.active .modal-dialog {
+      transform: scale(1);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .modal-title {
+      font-size: 1.5rem;
+      color: #333;
+      margin: 0;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #999;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .modal-close:hover {
+      background: #f0f0f0;
+      color: #333;
+    }
+
+    .modal-close:focus {
+      outline: 2px solid #667eea;
+      outline-offset: 2px;
+    }
+
+    .modal-body {
+      color: #555;
+      line-height: 1.8;
+    }
+
+    /* Tabs Styles */
+    .tabs-container {
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .tabs-list {
+      display: flex;
+      background: #f8f9ff;
+      border-bottom: 2px solid #e0e0e0;
+      list-style: none;
+    }
+
+    .tab-button {
+      flex: 1;
+      background: none;
+      border: none;
+      padding: 1rem;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: #666;
+      font-weight: 500;
+      position: relative;
+    }
+
+    .tab-button:hover {
+      background: rgba(255, 107, 53, 0.1);
+      color: #FF6B35;
+    }
+
+    .tab-button:focus {
+      outline: 3px solid #FF6B35;
+      outline-offset: -3px;
+      z-index: 1;
+    }
+
+    .tab-button[aria-selected="true"] {
+      background: white;
+      color: #FF6B35;
+      font-weight: 600;
+    }
+
+    .tab-button[aria-selected="true"]::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: #FF6B35;
+    }
+
+    .tab-panel {
+      padding: 2rem;
+      display: none;
+      animation: fadeIn 0.3s;
+    }
+
+    .tab-panel[aria-hidden="false"] {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Carousel Styles */
+    .carousel {
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #f8f9ff;
+      border: 2px solid #e0e0e0;
+    }
+
+    .carousel-viewport {
+      overflow: hidden;
+      position: relative;
+    }
+
+    .carousel-track {
+      display: flex;
+      transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      touch-action: pan-y pinch-zoom;
+    }
+
+    .carousel-slide {
+      min-width: 100%;
+      padding: 3rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .slide-number {
+      font-size: 4rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 1rem;
+    }
+
+    .slide-title {
+      font-size: 1.5rem;
+      color: #333;
+      margin-bottom: 0.5rem;
+    }
+
+    .slide-description {
+      color: #666;
+      max-width: 500px;
+    }
+
+    .carousel-controls {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      padding: 1.5rem;
+      background: white;
+      border-top: 2px solid #e0e0e0;
+    }
+
+    .carousel-button {
+      background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);
+      color: white;
+      border: none;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      font-weight: 600;
+    }
+
+    .carousel-button:hover:not(:disabled) {
+      transform: scale(1.1);
+      box-shadow: 0 4px 12px rgba(255, 107, 53, 0.4);
+    }
+
+    .carousel-button:focus {
+      outline: 3px solid #FF6B35;
+      outline-offset: 2px;
+    }
+
+    .carousel-button:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .carousel-indicators {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .carousel-indicator {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #ddd;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      padding: 0;
+    }
+
+    .carousel-indicator:hover {
+      background: #bbb;
+    }
+
+    .carousel-indicator.active {
+      background: #FF6B35;
+      width: 30px;
+      border-radius: 5px;
+    }
+
+    .carousel-indicator:focus {
+      outline: 2px solid #FF6B35;
+      outline-offset: 2px;
+    }
+
+    /* Test Results */
+    .test-results {
+      background: #f0f9ff;
+      border: 2px solid #0ea5e9;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .test-results h3 {
+      color: #0369a1;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .test-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem;
+      margin: 0.25rem 0;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+    }
+
+    .test-pass {
+      color: #059669;
+    }
+
+    .test-pass::before {
+      content: '✓';
+      font-weight: bold;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 1.5rem;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
+
+      .tabs-list {
+        flex-direction: column;
+      }
+
+      .carousel-slide {
+        padding: 2rem 1rem;
+      }
+
+      .slide-number {
+        font-size: 3rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="techfest-header">
+      <h2>TechFest IIT Bombay 2025</h2>
+      <p>Asia's Largest Science & Technology Festival</p>
+      <div class="techfest-info">
+        <div class="info-card">
+          <h3>📅 Event Dates</h3>
+          <p>December 16-18, 2025<br>IIT Bombay Campus</p>
+        </div>
+        <div class="info-card">
+          <h3>🎯 Theme</h3>
+          <p>Innovation Beyond Boundaries<br>Technology for Tomorrow</p>
+        </div>
+        <div class="info-card">
+          <h3>🏆 Competitions</h3>
+          <p>50+ events across robotics, programming, design & engineering</p>
+        </div>
+        <div class="info-card">
+          <h3>👥 Expected Footfall</h3>
+          <p>1.5 Lakh+ visitors<br>2000+ colleges participating</p>
+        </div>
+      </div>
+    </div>
+    
+    <h1>Interactive UI Components Showcase</h1>
+    <p class="subtitle">Demonstrating accessible, reusable components built with vanilla JavaScript for TechFest's digital experiences</p>
+
+    <!-- Modal Component -->
+    <section class="component-section">
+      <h2>1. TechFest Event Registration Modal</h2>
+      <p class="description">Interactive registration modal for TechFest events with full accessibility features and focus management.</p>
+      <div class="features">
+        <strong>Features:</strong> Focus trap, ESC to close, click outside to close, keyboard navigation, ARIA labels, scroll lock
+      </div>
+      <button class="modal-trigger" id="openModal1">Register for TechFest 2025</button>
+    </section>
+
+    <!-- Tabs Component -->
+    <section class="component-section">
+      <h2>2. TechFest Competition Categories</h2>
+      <p class="description">Explore different competition categories at TechFest with keyboard-navigable tabs and comprehensive event information.</p>
+      <div class="features">
+        <strong>Features:</strong> Arrow key navigation (←/→), Home/End keys, automatic activation, ARIA attributes, smooth transitions
+      </div>
+      <div id="myTabs"></div>
+    </section>
+
+    <!-- Carousel Component -->
+    <section class="component-section">
+      <h2>3. TechFest Highlights Carousel</h2>
+      <p class="description">Discover TechFest's key attractions through an interactive carousel with touch and keyboard navigation.</p>
+      <div class="features">
+        <strong>Features:</strong> Touch swipe support, keyboard navigation (←/→), click indicators, infinite loop option, auto-play, accessible buttons
+      </div>
+      <div id="myCarousel"></div>
+    </section>
+
+    <!-- Test Results -->
+    <div class="test-results">
+      <h3>🧪 Unit Test Results</h3>
+      <div id="testOutput"></div>
+    </div>
+  </div>
+
+  <script>
+    // =============================================
+    // MODAL COMPONENT
+    // =============================================
+    class Modal {
+      constructor(options = {}) {
+        this.options = {
+          title: options.title || 'Modal Title',
+          content: options.content || 'Modal content goes here.',
+          onOpen: options.onOpen || null,
+          onClose: options.onClose || null,
+          closeOnOverlay: options.closeOnOverlay !== false,
+          closeOnEsc: options.closeOnEsc !== false
+        };
+        
+        this.isOpen = false;
+        this.previousFocus = null;
+        this.focusableElements = [];
+        this.create();
+        this.bindEvents();
+      }
+
+      create() {
+        this.overlay = document.createElement('div');
+        this.overlay.className = 'modal-overlay';
+        this.overlay.setAttribute('role', 'dialog');
+        this.overlay.setAttribute('aria-modal', 'true');
+        this.overlay.setAttribute('aria-labelledby', 'modal-title');
+        
+        this.overlay.innerHTML = `
+          <div class="modal-dialog">
+            <div class="modal-header">
+              <h2 class="modal-title" id="modal-title">${this.options.title}</h2>
+              <button class="modal-close" aria-label="Close modal">&times;</button>
+            </div>
+            <div class="modal-body">${this.options.content}</div>
+          </div>
+        `;
+        
+        document.body.appendChild(this.overlay);
+        this.dialog = this.overlay.querySelector('.modal-dialog');
+        this.closeBtn = this.overlay.querySelector('.modal-close');
+      }
+
+      bindEvents() {
+        this.closeBtn.addEventListener('click', () => this.close());
+        
+        if (this.options.closeOnOverlay) {
+          this.overlay.addEventListener('click', (e) => {
+            if (e.target === this.overlay) this.close();
+          });
+        }
+
+        if (this.options.closeOnEsc) {
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && this.isOpen) this.close();
+          });
+        }
+
+        this.overlay.addEventListener('keydown', (e) => {
+          if (e.key === 'Tab') this.trapFocus(e);
+        });
+      }
+
+      getFocusableElements() {
+        const selectors = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+        return Array.from(this.dialog.querySelectorAll(selectors));
+      }
+
+      trapFocus(e) {
+        this.focusableElements = this.getFocusableElements();
+        const first = this.focusableElements[0];
+        const last = this.focusableElements[this.focusableElements.length - 1];
+
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+
+      open() {
+        this.previousFocus = document.activeElement;
+        document.body.style.overflow = 'hidden';
+        this.overlay.classList.add('active');
+        this.isOpen = true;
+        
+        setTimeout(() => {
+          this.focusableElements = this.getFocusableElements();
+          if (this.focusableElements.length > 0) {
+            this.focusableElements[0].focus();
+          }
+        }, 100);
+
+        if (this.options.onOpen) this.options.onOpen();
+      }
+
+      close() {
+        document.body.style.overflow = '';
+        this.overlay.classList.remove('active');
+        this.isOpen = false;
+        
+        if (this.previousFocus) {
+          this.previousFocus.focus();
+        }
+
+        if (this.options.onClose) this.options.onClose();
+      }
+
+      destroy() {
+        this.overlay.remove();
+      }
+    }
+
+    // =============================================
+    // TABS COMPONENT
+    // =============================================
+    class Tabs {
+      constructor(container, options = {}) {
+        this.container = typeof container === 'string' ? document.querySelector(container) : container;
+        this.options = {
+          tabs: options.tabs || [],
+          defaultTab: options.defaultTab || 0,
+          onChange: options.onChange || null
+        };
+        
+        this.currentIndex = this.options.defaultTab;
+        this.tabButtons = [];
+        this.tabPanels = [];
+        this.create();
+        this.bindEvents();
+      }
+
+      create() {
+        const tabsList = document.createElement('ul');
+        tabsList.className = 'tabs-list';
+        tabsList.setAttribute('role', 'tablist');
+
+        this.options.tabs.forEach((tab, i) => {
+          const li = document.createElement('li');
+          li.setAttribute('role', 'presentation');
+          
+          const btn = document.createElement('button');
+          btn.className = 'tab-button';
+          btn.textContent = tab.label;
+          btn.setAttribute('role', 'tab');
+          btn.setAttribute('aria-selected', i === this.currentIndex);
+          btn.setAttribute('aria-controls', `panel-${i}`);
+          btn.setAttribute('id', `tab-${i}`);
+          btn.setAttribute('tabindex', i === this.currentIndex ? '0' : '-1');
+          
+          li.appendChild(btn);
+          tabsList.appendChild(li);
+          this.tabButtons.push(btn);
+        });
+
+        this.container.appendChild(tabsList);
+
+        this.options.tabs.forEach((tab, i) => {
+          const panel = document.createElement('div');
+          panel.className = 'tab-panel';
+          panel.setAttribute('role', 'tabpanel');
+          panel.setAttribute('aria-labelledby', `tab-${i}`);
+          panel.setAttribute('id', `panel-${i}`);
+          panel.setAttribute('aria-hidden', i !== this.currentIndex);
+          panel.innerHTML = tab.content;
+          
+          this.container.appendChild(panel);
+          this.tabPanels.push(panel);
+        });
+      }
+
+      bindEvents() {
+        this.tabButtons.forEach((btn, i) => {
+          btn.addEventListener('click', () => this.switchTab(i));
+          btn.addEventListener('keydown', (e) => this.handleKeyboard(e, i));
+        });
+      }
+
+      handleKeyboard(e, currentIndex) {
+        let newIndex = currentIndex;
+
+        switch(e.key) {
+          case 'ArrowLeft':
+            e.preventDefault();
+            newIndex = currentIndex > 0 ? currentIndex - 1 : this.tabButtons.length - 1;
+            break;
+          case 'ArrowRight':
+            e.preventDefault();
+            newIndex = currentIndex < this.tabButtons.length - 1 ? currentIndex + 1 : 0;
+            break;
+          case 'Home':
+            e.preventDefault();
+            newIndex = 0;
+            break;
+          case 'End':
+            e.preventDefault();
+            newIndex = this.tabButtons.length - 1;
+            break;
+          default:
+            return;
+        }
+
+        this.switchTab(newIndex);
+        this.tabButtons[newIndex].focus();
+      }
+
+      switchTab(index) {
+        this.tabButtons[this.currentIndex].setAttribute('aria-selected', 'false');
+        this.tabButtons[this.currentIndex].setAttribute('tabindex', '-1');
+        this.tabPanels[this.currentIndex].setAttribute('aria-hidden', 'true');
+
+        this.currentIndex = index;
+
+        this.tabButtons[this.currentIndex].setAttribute('aria-selected', 'true');
+        this.tabButtons[this.currentIndex].setAttribute('tabindex', '0');
+        this.tabPanels[this.currentIndex].setAttribute('aria-hidden', 'false');
+
+        if (this.options.onChange) {
+          this.options.onChange(index);
+        }
+      }
+
+      getActiveIndex() {
+        return this.currentIndex;
+      }
+
+      destroy() {
+        this.container.innerHTML = '';
+      }
+    }
+
+    // =============================================
+    // CAROUSEL COMPONENT
+    // =============================================
+    class Carousel {
+      constructor(container, options = {}) {
+        this.container = typeof container === 'string' ? document.querySelector(container) : container;
+        this.options = {
+          slides: options.slides || [],
+          infinite: options.infinite !== false,
+          autoPlay: options.autoPlay || false,
+          autoPlayInterval: options.autoPlayInterval || 3000,
+          onChange: options.onChange || null
+        };
+        
+        this.currentIndex = 0;
+        this.touchStartX = 0;
+        this.touchEndX = 0;
+        this.autoPlayTimer = null;
+        this.create();
+        this.bindEvents();
+        
+        if (this.options.autoPlay) {
+          this.startAutoPlay();
+        }
+      }
+
+      create() {
+        this.container.innerHTML = `
+          <div class="carousel">
+            <div class="carousel-viewport">
+              <div class="carousel-track"></div>
+            </div>
+            <div class="carousel-controls">
+              <button class="carousel-button prev-button" aria-label="Previous slide">‹</button>
+              <div class="carousel-indicators"></div>
+              <button class="carousel-button next-button" aria-label="Next slide">›</button>
+            </div>
+          </div>
+        `;
+
+        this.track = this.container.querySelector('.carousel-track');
+        this.prevBtn = this.container.querySelector('.prev-button');
+        this.nextBtn = this.container.querySelector('.next-button');
+        this.indicatorsContainer = this.container.querySelector('.carousel-indicators');
+
+        this.options.slides.forEach((slide, i) => {
+          const slideEl = document.createElement('div');
+          slideEl.className = 'carousel-slide';
+          slideEl.setAttribute('role', 'group');
+          slideEl.setAttribute('aria-roledescription', 'slide');
+          slideEl.setAttribute('aria-label', `Slide ${i + 1} of ${this.options.slides.length}`);
+          slideEl.innerHTML = slide;
+          this.track.appendChild(slideEl);
+
+          const indicator = document.createElement('button');
+          indicator.className = 'carousel-indicator';
+          indicator.setAttribute('aria-label', `Go to slide ${i + 1}`);
+          if (i === 0) indicator.classList.add('active');
+          indicator.addEventListener('click', () => this.goToSlide(i));
+          this.indicatorsContainer.appendChild(indicator);
+        });
+
+        this.slides = this.track.querySelectorAll('.carousel-slide');
+        this.indicators = this.indicatorsContainer.querySelectorAll('.carousel-indicator');
+        this.updateButtons();
+      }
+
+      bindEvents() {
+        this.prevBtn.addEventListener('click', () => this.prev());
+        this.nextBtn.addEventListener('click', () => this.next());
+
+        this.track.addEventListener('touchstart', (e) => {
+          this.touchStartX = e.changedTouches[0].screenX;
+          this.stopAutoPlay();
+        });
+
+        this.track.addEventListener('touchend', (e) => {
+          this.touchEndX = e.changedTouches[0].screenX;
+          this.handleSwipe();
+        });
+
+        this.container.addEventListener('keydown', (e) => {
+          if (e.key === 'ArrowLeft') {
+            e.preventDefault();
+            this.prev();
+          } else if (e.key === 'ArrowRight') {
+            e.preventDefault();
+            this.next();
+          }
+        });
+
+        this.container.addEventListener('mouseenter', () => this.stopAutoPlay());
+        this.container.addEventListener('mouseleave', () => {
+          if (this.options.autoPlay) this.startAutoPlay();
+        });
+      }
+
+      handleSwipe() {
+        const swipeThreshold = 50;
+        const diff = this.touchStartX - this.touchEndX;
+
+        if (Math.abs(diff) > swipeThreshold) {
+          if (diff > 0) {
+            this.next();
+          } else {
+            this.prev();
+          }
+        }
+      }
+
+      goToSlide(index) {
+        this.indicators[this.currentIndex].classList.remove('active');
+        this.currentIndex = index;
+        this.indicators[this.currentIndex].classList.add('active');
+        this.track.style.transform = `translateX(-${this.currentIndex * 100}%)`;
+        this.updateButtons();
+        
+        if (this.options.onChange) {
+          this.options.onChange(this.currentIndex);
+        }
+      }
+
+      next() {
+        if (this.currentIndex < this.slides.length - 1) {
+          this.goToSlide(this.currentIndex + 1);
+        } else if (this.options.infinite) {
+          this.goToSlide(0);
+        }
+      }
+
+      prev() {
+        if (this.currentIndex > 0) {
+          this.goToSlide(this.currentIndex - 1);
+        } else if (this.options.infinite) {
+          this.goToSlide(this.slides.length - 1);
+        }
+      }
+
+      updateButtons() {
+        if (!this.options.infinite) {
+          this.prevBtn.disabled = this.currentIndex === 0;
+          this.nextBtn.disabled = this.currentIndex === this.slides.length - 1;
+        }
+      }
+
+      startAutoPlay() {
+        this.autoPlayTimer = setInterval(() => this.next(), this.options.autoPlayInterval);
+      }
+
+      stopAutoPlay() {
+        if (this.autoPlayTimer) {
+          clearInterval(this.autoPlayTimer);
+          this.autoPlayTimer = null;
+        }
+      }
+
+      getCurrentIndex() {
+        return this.currentIndex;
+      }
+
+      destroy() {
+        this.stopAutoPlay();
+        this.container.innerHTML = '';
+      }
+    }
+
+    // =============================================
+    // UNIT TESTS
+    // =============================================
+    class TestRunner {
+      constructor() {
+        this.tests = [];
+        this.results = [];
+      }
+
+      test(name, fn) {
+        this.tests.push({ name, fn });
+      }
+
+      async run() {
+        for (const test of this.tests) {
+          try {
+            await test.fn();
+            this.results.push({ name: test.name, pass: true });
+          } catch (error) {
+            this.results.push({ name: test.name, pass: false, error: error.message });
+          }
+        }
+        return this.results;
+      }
+
+      render(containerId) {
+        const container = document.getElementById(containerId);
+        this.results.forEach(result => {
+          const div = document.createElement('div');
+          div.className = `test-item ${result.pass ? 'test-pass' : 'test-fail'}`;
+          div.textContent = result.name;
+          container.appendChild(div);
+        });
+      }
+    }
+
+    function assert(condition, message) {
+      if (!condition) throw new Error(message || 'Assertion failed');
+    }
+
+    // Run Tests
+    const runner = new TestRunner();
+
+    // Modal Tests
+    runner.test('Modal: Creates with default options', () => {
+      const modal = new Modal();
+      assert(modal.options.title === 'Modal Title', 'Default title should be set');
+      assert(modal.isOpen === false, 'Modal should be closed initially');
+      modal.destroy();
+    });
+
+    runner.test('Modal: Opens and closes correctly', () => {
+      const modal = new Modal({ title: 'Test Modal' });
+      modal.open();
+      assert(modal.isOpen === true, 'Modal should be open');
+      modal.close();
+      assert(modal.isOpen === false, 'Modal should be closed');
+      modal.destroy();
+    });
+
+    runner.test('Modal: Triggers callbacks', () => {
+      let opened = false;
+      let closed = false;
+      const modal = new Modal({
+        onOpen: () => opened = true,
+        onClose: () => closed = true
+      });
+      modal.open();
+      assert(opened === true, 'onOpen callback should fire');
+      modal.close();
+      assert(closed === true, 'onClose callback should fire');
+      modal.destroy();
+    });
+
+    // Tabs Tests
+    runner.test('Tabs: Initializes with correct default tab', () => {
+      const container = document.createElement('div');
+      const tabs = new Tabs(container, {
+        tabs: [
+          { label: 'Tab 1', content: 'Content 1' },
+          { label: 'Tab 2', content: 'Content 2' }
+        ],
+        defaultTab: 1
+      });
+      assert(tabs.getActiveIndex() === 1, 'Should start on tab 1');
+      tabs.destroy();
+    });
+
+    runner.test('Tabs: Switches tabs correctly', () => {
+      const container = document.createElement('div');
+      const tabs = new Tabs(container, {
+        tabs: [
+          { label: 'Tab 1', content: 'Content 1' },
+          { label: 'Tab 2', content: 'Content 2' }
+        ]
+      });
+      tabs.switchTab(1);
+      assert(tabs.getActiveIndex() === 1, 'Should switch to tab 1');
+      tabs.destroy();
+    });
+
+    runner.test('Tabs: Triggers onChange callback', () => {
+      const container = document.createElement('div');
+      let changedIndex = -1;
+      const tabs = new Tabs(container, {
+        tabs: [
+          { label: 'Tab 1', content: 'Content 1' },
+          { label: 'Tab 2', content: 'Content 2' }
+        ],
+        onChange: (index) => changedIndex = index
+      });
+      tabs.switchTab(1);
+      assert(changedIndex === 1, 'onChange should fire with correct index');
+      tabs.destroy();
+    });
+
+    // Carousel Tests
+    runner.test('Carousel: Initializes at slide 0', () => {
+      const container = document.createElement('div');
+      const carousel = new Carousel(container, {
+        slides: ['Slide 1', 'Slide 2', 'Slide 3']
+      });
+      assert(carousel.getCurrentIndex() === 0, 'Should start at slide 0');
+      carousel.destroy();
+    });
+
+    runner.test('Carousel: Navigates next/prev correctly', () => {
+      const container = document.createElement('div');
+      const carousel = new Carousel(container, {
+        slides: ['Slide 1', 'Slide 2', 'Slide 3']
+      });
+      carousel.next();
+      assert(carousel.getCurrentIndex() === 1, 'Should move to slide 1');
+      carousel.prev();
+      assert(carousel.getCurrentIndex() === 0, 'Should move back to slide 0');
+      carousel.destroy();
+    });
+
+    runner.test('Carousel: Infinite loop works', () => {
+      const container = document.createElement('div');
+      const carousel = new Carousel(container, {
+        slides: ['Slide 1', 'Slide 2', 'Slide 3'],
+        infinite: true
+      });
+      carousel.goToSlide(2);
+      carousel.next();
+      assert(carousel.getCurrentIndex() === 0, 'Should loop to start');
+      carousel.prev();
+      assert(carousel.getCurrentIndex() === 2, 'Should loop to end');
+      carousel.destroy();
+    });
+
+    runner.test('Carousel: Non-infinite stops at boundaries', () => {
+      const container = document.createElement('div');
+      const carousel = new Carousel(container, {
+        slides: ['Slide 1', 'Slide 2', 'Slide 3'],
+        infinite: false
+      });
+      carousel.prev();
+      assert(carousel.getCurrentIndex() === 0, 'Should stay at start');
+      carousel.goToSlide(2);
+      carousel.next();
+      assert(carousel.getCurrentIndex() === 2, 'Should stay at end');
+      carousel.destroy();
+    });
+
+    runner.test('Carousel: Triggers onChange callback', () => {
+      const container = document.createElement('div');
+      let changedIndex = -1;
+      const carousel = new Carousel(container, {
+        slides: ['Slide 1', 'Slide 2', 'Slide 3'],
+        onChange: (index) => changedIndex = index
+      });
+      carousel.next();
+      assert(changedIndex === 1, 'onChange should fire with correct index');
+      carousel.destroy();
+    });
+
+    // =============================================
+    // DEMO INITIALIZATION
+    // =============================================
+    
+    // Initialize Modal
+    const modal1 = new Modal({
+      title: 'TechFest 2025 Registration',
+      content: `
+        <div style="text-align: center; margin-bottom: 2rem;">
+          <h3 style="color: #FF6B35; margin-bottom: 1rem;">🎉 Join Asia's Largest Tech Festival!</h3>
+          <p style="font-size: 1.1rem; margin-bottom: 1.5rem;">Register now for TechFest IIT Bombay 2025</p>
+        </div>
+        
+        <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+          <h4 style="color: #333; margin-bottom: 1rem;">📅 Event Details</h4>
+          <p><strong>Dates:</strong> December 16-18, 2025</p>
+          <p><strong>Venue:</strong> IIT Bombay Campus, Powai, Mumbai</p>
+          <p><strong>Registration Fee:</strong> ₹500 (Includes all events access + TechFest merchandise)</p>
+        </div>
+        
+        <div style="background: #e8f5e8; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+          <h4 style="color: #2d5a2d; margin-bottom: 1rem;">🏆 What's Included</h4>
+          <ul style="margin: 0; padding-left: 1.5rem; line-height: 1.8;">
+            <li>Access to 50+ competitions across robotics, AI, and engineering</li>
+            <li>Workshops by industry experts from Google, Microsoft, Tesla</li>
+            <li>Keynote sessions with tech leaders and innovators</li>
+            <li>Networking opportunities with 2000+ colleges</li>
+            <li>TechFest merchandise and certificates</li>
+          </ul>
+        </div>
+        
+        <div style="text-align: center;">
+          <p style="color: #666; font-size: 0.9rem; margin-bottom: 1rem;">
+            This modal demonstrates accessibility features:<br>
+            Focus trap • ESC to close • Keyboard navigation • ARIA attributes
+          </p>
+          <button style="background: #FF6B35; color: white; border: none; padding: 12px 24px; border-radius: 6px; font-size: 1rem; cursor: pointer;">
+            Complete Registration →
+          </button>
+        </div>
+      `
+    });
+
+    document.getElementById('openModal1').addEventListener('click', () => modal1.open());
+
+    // Initialize Tabs
+    new Tabs('#myTabs', {
+      tabs: [
+        {
+          label: '🤖 Robotics',
+          content: `
+            <h3>Robotics Competitions</h3>
+            <p>Experience cutting-edge robotics challenges that push the boundaries of automation and AI:</p>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin: 1.5rem 0;">
+              <div style="background: #f8f9ff; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #FF6B35;">
+                <h4 style="color: #FF6B35; margin-bottom: 0.5rem;">🏎️ Roborace</h4>
+                <p style="margin-bottom: 1rem;">Autonomous racing robots compete on challenging tracks</p>
+                <p style="color: #666; font-size: 0.9rem;"><strong>Prize Pool:</strong> ₹2,00,000</p>
+              </div>
+              <div style="background: #f8f9ff; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #FF6B35;">
+                <h4 style="color: #FF6B35; margin-bottom: 0.5rem;">🦾 Robosoccer</h4>
+                <p style="margin-bottom: 1rem;">Soccer-playing robots with advanced AI algorithms</p>
+                <p style="color: #666; font-size: 0.9rem;"><strong>Prize Pool:</strong> ₹1,50,000</p>
+              </div>
+              <div style="background: #f8f9ff; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #FF6B35;">
+                <h4 style="color: #FF6B35; margin-bottom: 0.5rem;">🚁 Drone Challenge</h4>
+                <p style="margin-bottom: 1rem;">Autonomous drones navigate complex obstacle courses</p>
+                <p style="color: #666; font-size: 0.9rem;"><strong>Prize Pool:</strong> ₹1,75,000</p>
+              </div>
+            </div>
+            <p style="background: #e8f5e8; padding: 1rem; border-radius: 6px; margin-top: 1rem;">
+              <strong>🎯 Navigation Tip:</strong> Use ← → arrow keys to explore different competition categories!
+            </p>
+          `
+        },
+        {
+          label: '💻 Programming',
+          content: `
+            <h3>Programming Competitions</h3>
+            <p>Challenge your coding skills with competitive programming events designed for all skill levels:</p>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin: 1.5rem 0;">
+              <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #F7931E;">
+                <h4 style="color: #F7931E; margin-bottom: 0.5rem;">🏆 CodeWars</h4>
+                <p style="margin-bottom: 1rem;">24-hour competitive programming marathon</p>
+                <p style="color: #666; font-size: 0.9rem;"><strong>Prize Pool:</strong> ₹3,00,000</p>
+              </div>
+              <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #F7931E;">
+                <h4 style="color: #F7931E; margin-bottom: 0.5rem;">🧠 AlgoRhythm</h4>
+                <p style="margin-bottom: 1rem;">Algorithm design and optimization challenges</p>
+                <p style="color: #666; font-size: 0.9rem;"><strong>Prize Pool:</strong> ₹2,25,000</p>
+              </div>
+              <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #F7931E;">
+                <h4 style="color: #F7931E; margin-bottom: 0.5rem;">🌐 WebDev Challenge</h4>
+                <p style="margin-bottom: 1rem;">Full-stack web development under time pressure</p>
+                <p style="color: #666; font-size: 0.9rem;"><strong>Prize Pool:</strong> ₹1,50,000</p>
+              </div>
+            </div>
+            <div style="background: #fff7ed; padding: 1rem; border-radius: 6px; margin-top: 1rem;">
+              <p><strong>📊 Participation Stats:</strong> 5000+ programmers • 200+ colleges • Online & Offline rounds</p>
+            </div>
+          `
+        },
+        {
+          label: '🎨 Design',
+          content: `
+            <h3>Design & Innovation</h3>
+            <p>Showcase your creativity and design thinking in competitions that blend art with technology:</p>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin: 1.5rem 0;">
+              <div style="background: #fdf2f8; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #FFD23F;">
+                <h4 style="color: #d97706; margin-bottom: 0.5rem;">🎭 UI/UX Design</h4>
+                <p style="margin-bottom: 1rem;">Design intuitive interfaces for emerging technologies</p>
+                <p style="color: #666; font-size: 0.9rem;"><strong>Prize Pool:</strong> ₹1,25,000</p>
+              </div>
+              <div style="background: #fdf2f8; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #FFD23F;">
+                <h4 style="color: #d97706; margin-bottom: 0.5rem;">🏗️ CAD Modeling</h4>
+                <p style="margin-bottom: 1rem;">3D design and engineering modeling competition</p>
+                <p style="color: #666; font-size: 0.9rem;"><strong>Prize Pool:</strong> ₹1,00,000</p>
+              </div>
+              <div style="background: #fdf2f8; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #FFD23F;">
+                <h4 style="color: #d97706; margin-bottom: 0.5rem;">🎬 Video Production</h4>
+                <p style="margin-bottom: 1rem;">Create compelling tech documentaries and animations</p>
+                <p style="color: #666; font-size: 0.9rem;"><strong>Prize Pool:</strong> ₹75,000</p>
+              </div>
+            </div>
+            <div style="background: #f0fdf4; padding: 1rem; border-radius: 6px; margin-top: 1rem;">
+              <p><strong>✨ Special Feature:</strong> Industry mentors from Adobe, Figma, and Autodesk will judge the finals!</p>
+            </div>
+          `
+        },
+        {
+          label: '🔬 Science',
+          content: `
+            <h3>Science & Research</h3>
+            <p>Explore scientific frontiers through research presentations, model-making, and innovative experiments:</p>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin: 1.5rem 0;">
+              <div style="background: #f0fdf4; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #10b981;">
+                <h4 style="color: #059669; margin-bottom: 0.5rem;">🧪 Chemistry Lab</h4>
+                <p style="margin-bottom: 1rem;">Innovative synthesis and analysis challenges</p>
+                <p style="color: #666; font-size: 0.9rem;"><strong>Prize Pool:</strong> ₹1,00,000</p>
+              </div>
+              <div style="background: #f0fdf4; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #10b981;">
+                <h4 style="color: #059669; margin-bottom: 0.5rem;">⚡ Physics Olympiad</h4>
+                <p style="margin-bottom: 1rem;">Theoretical and experimental physics problems</p>
+                <p style="color: #666; font-size: 0.9rem;"><strong>Prize Pool:</strong> ₹1,25,000</p>
+              </div>
+              <div style="background: #f0fdf4; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #10b981;">
+                <h4 style="color: #059669; margin-bottom: 0.5rem;">🌱 Bio-Innovation</h4>
+                <p style="margin-bottom: 1rem;">Biotechnology solutions for real-world problems</p>
+                <p style="color: #666; font-size: 0.9rem;"><strong>Prize Pool:</strong> ₹1,50,000</p>
+              </div>
+            </div>
+            <div style="background: #fef3c7; padding: 1rem; border-radius: 6px; margin-top: 1rem;">
+              <p><strong>🔬 Research Showcase:</strong> Present your projects to Nobel laureates and leading scientists!</p>
+            </div>
+          `
+        }
+      ],
+      defaultTab: 0
+    });
+
+    // Initialize Carousel
+    new Carousel('#myCarousel', {
+      slides: [
+        `
+          <div class="slide-number">🎪</div>
+          <div class="slide-title">Grand Opening Ceremony</div>
+          <div class="slide-description">Spectacular inauguration with celebrity guests, drone shows, and cultural performances. Features keynote by Elon Musk (virtual) and demonstrations of cutting-edge technology.</div>
+        `,
+        `
+          <div class="slide-number">🏆</div>
+          <div class="slide-title">International Competitions</div>
+          <div class="slide-description">Compete with teams from 40+ countries in robotics, AI, and engineering challenges. Total prize pool of ₹50 lakhs across all competitions with industry internships for winners.</div>
+        `,
+        `
+          <div class="slide-number">🔬</div>
+          <div class="slide-title">Innovation Expo</div>
+          <div class="slide-description">Experience 200+ cutting-edge projects from startups, research labs, and tech giants. Interactive demos of AR/VR, quantum computing, and sustainable technology solutions.</div>
+        `,
+        `
+          <div class="slide-number">🎓</div>
+          <div class="slide-title">Expert Workshops</div>
+          <div class="slide-description">Learn from industry leaders through hands-on workshops on machine learning, blockchain, cybersecurity, and emerging technologies. 100+ sessions across 3 days.</div>
+        `,
+        `
+          <div class="slide-number">🌟</div>
+          <div class="slide-title">Networking & Culture</div>
+          <div class="slide-description">Connect with 1.5 lakh+ students, researchers, and industry professionals. Evening cultural events, tech talks, and startup pitch competitions creating lifelong connections.</div>
+        `
+      ],
+      infinite: true,
+      autoPlay: false
+    });
+
+    // Run tests and display results
+    runner.run().then(() => {
+      runner.render('testOutput');
+    });
