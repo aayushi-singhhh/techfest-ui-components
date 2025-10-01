@@ -1,0 +1,135 @@
+name: TechFest UI Components CI/CD
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    name: Test UI Components
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+    
+    - name: Install dependencies
+      run: |
+        npm install -g http-server
+        npm install -g puppeteer
+    
+    - name: Start local server
+      run: |
+        http-server . -p 8080 &
+        sleep 3
+      
+    - name: Run accessibility tests
+      run: |
+        node -e "
+        const puppeteer = require('puppeteer');
+        (async () => {
+          const browser = await puppeteer.launch();
+          const page = await browser.newPage();
+          await page.goto('http://localhost:8080/techfest.html');
+          
+          // Wait for components to load
+          await page.waitForSelector('.modal-trigger');
+          await page.waitForSelector('#myTabs');
+          await page.waitForSelector('#myCarousel');
+          
+          // Test modal functionality
+          await page.click('.modal-trigger');
+          await page.waitForSelector('.modal-overlay.active');
+          await page.keyboard.press('Escape');
+          await page.waitForSelector('.modal-overlay:not(.active)', { timeout: 1000 });
+          
+          // Test keyboard navigation in tabs
+          await page.focus('.tab-button');
+          await page.keyboard.press('ArrowRight');
+          
+          // Test carousel navigation
+          await page.click('.next-button');
+          
+          // Check for console errors
+          const errors = await page.evaluate(() => {
+            return window.errors || [];
+          });
+          
+          if (errors.length > 0) {
+            console.error('JavaScript errors found:', errors);
+            process.exit(1);
+          }
+          
+          console.log('✅ All UI component tests passed!');
+          await browser.close();
+        })();
+        "
+    
+    - name: Test unit tests
+      run: |
+        node -e "
+        const puppeteer = require('puppeteer');
+        (async () => {
+          const browser = await puppeteer.launch();
+          const page = await browser.newPage();
+          await page.goto('http://localhost:8080/techfest.html');
+          
+          // Wait for tests to complete
+          await page.waitForTimeout(2000);
+          
+          // Check test results
+          const testResults = await page.evaluate(() => {
+            const testItems = document.querySelectorAll('.test-item');
+            const failed = document.querySelectorAll('.test-fail');
+            return {
+              total: testItems.length,
+              failed: failed.length
+            };
+          });
+          
+          console.log(\`Tests run: \${testResults.total}\`);
+          console.log(\`Tests failed: \${testResults.failed}\`);
+          
+          if (testResults.failed > 0) {
+            console.error('❌ Some unit tests failed!');
+            process.exit(1);
+          }
+          
+          console.log('✅ All unit tests passed!');
+          await browser.close();
+        })();
+        "
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    name: Deploy to GitHub Pages
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./
+        publish_branch: gh-pages
+        
+    - name: Comment deployment URL
+      uses: actions/github-script@v6
+      if: github.event_name == 'pull_request'
+      with:
+        script: |
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: '🚀 **Deployment Preview**: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/'
+          })

@@ -1,0 +1,41 @@
+{
+  "name": "techfest-ui-components",
+  "version": "1.0.0",
+  "description": "Interactive UI Components for TechFest IIT Bombay 2025",
+  "main": "techfest.html",
+  "scripts": {
+    "start": "http-server . -p 8080 -o",
+    "test": "node test/run-tests.js",
+    "build": "echo 'No build step required for vanilla JS'",
+    "deploy": "gh-pages -d ."
+  },
+  "keywords": [
+    "vanilla-javascript",
+    "ui-components",
+    "accessibility",
+    "techfest",
+    "iit-bombay",
+    "modal",
+    "tabs",
+    "carousel"
+  ],
+  "author": "TechFest IIT Bombay",
+  "license": "MIT",
+  "homepage": "https://techfest.org",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/techfest-ui-components.git"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1",
+    "puppeteer": "^21.0.0",
+    "gh-pages": "^6.0.0"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "browserslist": [
+    "defaults",
+    "not IE 11"
+  ]
+}
